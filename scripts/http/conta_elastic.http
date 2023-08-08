@@ -1,0 +1,60 @@
+###
+
+# curl -XGET "https://172.18.0.2:9200/dados_abertos/_count" -H "kbn-xsrf: reporting" -H "Content-Type: application/json" -d'
+#{
+#  "query": {
+#    "match_all": {}
+#  }
+#}'
+GET https://spedison:12345678@127.0.0.1:9200/dados_abertos/_count
+kbn-xsrf: reporting
+Content-Type: application/json
+
+{
+  "query": {
+    "match_all": {}
+  }
+}
+###
+
+
+
+# curl -XGET "http://elasticsearch:9200/_search" -H 'Content-Type: application/json' -d'
+#{
+#  "query": {
+#    "match_all": {}
+#  }
+#}'
+GET http://elasticsearch:9200/_search
+Content-Type: application/json
+
+
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+###
+GET http://elastic:123456@127.0.0.1:9200/
+Content-Type: application/json
+
+## Create index on
+PUT http://elastic:123456@127.0.0.1:9200/variavel
+Content-Type: application/json
+
+## Configure Index Step 1
+PUT http://elastic:123456@127.0.0.1:9200/variavel
+Content-Type: application/json
+
+{
+  "settings" : {
+      "index" : {
+          "number_of_shards" : 3,
+          "number_of_replicas" : 2
+      }
+  }
+}
+## ###############
+
+
