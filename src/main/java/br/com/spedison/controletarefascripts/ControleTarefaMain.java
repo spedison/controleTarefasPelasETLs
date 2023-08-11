@@ -36,13 +36,11 @@ public class ControleTarefaMain {
                 }
             }
         }
+
+        if (args[0].equalsIgnoreCase("FechaForcadoTarefa")) {
+            ts.fecharForcadamenteTarefa(Long.parseLong(args[1]));
+        }
         return id;
     }
-
-//        SpringApplication.run(ControleTarefaScriptsApplication.class, args).close();
-//        System.out.println("done");
-
-
-
 
 }

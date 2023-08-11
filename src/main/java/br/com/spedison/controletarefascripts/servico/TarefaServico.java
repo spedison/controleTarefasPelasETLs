@@ -25,7 +25,7 @@ public class TarefaServico {
     private AtividadeRepository atividadeRepository;
 
     @Autowired
-    private ContaRegistrosElastic contaRegistrosElastic;
+    private ContaRegistros contaRegistrosElastic;
 
     @Transactional
     public Tarefa criaNovaTarefa(String tipoTarefa) {
@@ -42,7 +42,7 @@ public class TarefaServico {
         tarefa.setTipo(tipoTarefa);
         tarefa.setInicio(new Timestamp(System.currentTimeMillis()));
 
-        //TODO: Conta a quantidade de registros no Elastic.
+        //Conta a quantidade de registros no Elastic.
         tarefa.setContagemRegistrosProcessosElasticInicioProcessamento(contaRegistrosElastic.contagemProcessos());
         tarefa.setContagemRegistrosVariaveisElasticInicioProcessamento(contaRegistrosElastic.contagemVariaveis());
 
@@ -63,10 +63,6 @@ public class TarefaServico {
         }
 
         Optional<Integer> contagem = tarefaRepository.contaAtividadesAbertasDaTarefa(idTarefa);
-//        if (contagem.isEmpty()) {
-//            log.error("Tarefa %d - %s não pode ser fechada pois não tem atividades.".formatted(idTarefa, tipoTarefa));
-//            return null;
-//        }
 
         if (!tipoTarefa.equalsIgnoreCase(tarefa.get().getTipo())) {
             log.error("Tarefa %d - %s não pode ser fechada pois pois o tipo está diferente : %s.".formatted(idTarefa, tipoTarefa, tarefa.get().getTipo()));
@@ -85,7 +81,7 @@ public class TarefaServico {
             return null;
         }
 
-        //TODO: Conta a quantidade de registros processados no elastic.
+        //Conta a quantidade de registros processados no elastic.
         ret.setContagemRegistrosProcessosElasticFinalProcessamento(contaRegistrosElastic.contagemProcessos());
         ret.setContagemRegistrosVariaveisElasticFinalProcessamento(contaRegistrosElastic.contagemVariaveis());
 
@@ -94,8 +90,8 @@ public class TarefaServico {
                         && ret.getContagemRegistrosProcessosElasticFinalProcessamento() > ret.getContagemRegistrosProcessosElasticInicioProcessamento();
 
         boolean alerta =
-                ret.getContagemRegistrosVariaveisElasticFinalProcessamento() == ret.getContagemRegistrosVariaveisElasticInicioProcessamento()
-                        && ret.getContagemRegistrosProcessosElasticFinalProcessamento() == ret.getContagemRegistrosProcessosElasticInicioProcessamento();
+                ret.getContagemRegistrosVariaveisElasticFinalProcessamento().equals(ret.getContagemRegistrosVariaveisElasticInicioProcessamento())
+                        && ret.getContagemRegistrosProcessosElasticFinalProcessamento().equals(ret.getContagemRegistrosProcessosElasticInicioProcessamento());
 
         if (alerta)
             ret.setSucesso(null);
@@ -128,6 +124,7 @@ public class TarefaServico {
         tarefa.setFim(new Timestamp(System.currentTimeMillis()));
         tarefa.setContagemRegistrosVariaveisElasticFinalProcessamento(-1L);
         tarefa.setContagemRegistrosProcessosElasticFinalProcessamento(-1L);
+        tarefa.setSucesso(false);
         tarefaRepository.save(tarefa);
     }
 

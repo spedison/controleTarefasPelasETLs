@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(schema = "ADMTAREFAS")
+@Table(schema = "ADMATENA", name = "TB_ETLS_TAREFA")
 public class Tarefa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

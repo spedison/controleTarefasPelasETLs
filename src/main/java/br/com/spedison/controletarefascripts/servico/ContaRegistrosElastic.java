@@ -1,21 +1,26 @@
 package br.com.spedison.controletarefascripts.servico;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.regex.Pattern;
 
 @Component
 @Log4j2
-public class ContaRegistrosElastic {
+@AllArgsConstructor
+@NoArgsConstructor
+@Profile({"elastic-prod", "elastic-dev"})
+public class ContaRegistrosElastic implements ContaRegistros {
 
     @Value("${elastic.url.contagem.processos}")
     String urlProcessos;
@@ -23,65 +28,67 @@ public class ContaRegistrosElastic {
     @Value("${elastic.url.contagem.variaveis}")
     String urlVariaveis;
 
+    @Value("${elastic.user}")
+    String username;
+    @Value("${elastic.pass}")
+    String password;
+
+
+    @Override
     public Long contagemVariaveis() {
         return contagemUrl(urlVariaveis);
     }
 
+    @Override
     public Long contagemProcessos() {
         return contagemUrl(urlProcessos);
     }
 
     private Long contagemUrl(String url) {
 
-        System.out.println("Carregrando Main ... ");
+        log.info("Acessando o Elastic com a URL : " + url);
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET() // GET is default
-                .build();
-
-        HttpResponse<Void> response = null;
+        String bodyStr = null;
+        int retCode = -1;
         try {
-            response = client.send(request,
-                    HttpResponse.BodyHandlers.discarding());
-        } catch (InterruptedException ie) {
-            log.error("Conexao interrompida " + ie.getMessage());
-            return -1L;
+            URL urlGet = new URL(url);
+            HttpURLConnection urlConnection = (HttpURLConnection) urlGet.openConnection();
+            String encoded = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+            urlConnection.setRequestProperty("Authorization", "Basic " + encoded);
+            urlConnection.connect();
+            byte[] bodyBts = urlConnection.getInputStream().readAllBytes();
+            retCode = urlConnection.getResponseCode();
+            bodyStr = new String(bodyBts);
         } catch (IOException ioe) {
-            log.error("Problemas na comunicação " + ioe.getMessage());
+            log.error(ioe);
             return -1L;
         }
+
 
         // OK quando o retorno for 2XX
-        boolean retOk = response.statusCode() >= 200 && response.statusCode() <= 299;
+        boolean retOk = retCode >= 200 && retCode <= 299;
 
         if (!retOk) {
-            log.error("Problemas ao conectar com Elastic. StatusCode = " + response.statusCode());
+            ContaRegistrosElastic.log.error("Problemas ao conectar com Elastic. StatusCode = " + retCode);
             return -1L;
         }
 
-        if (response.request().bodyPublisher().isEmpty()) {
-            log.error("Não tinha corpo na resposta");
+        if (bodyStr.isEmpty()) {
+            ContaRegistrosElastic.log.error("Não tinha corpo na resposta");
             return -1L;
         }
 
         //Exemplo :: "count": 4488,
         final Pattern pattern = Pattern.compile("[ ]?\"count\"[ ]?:[ ]?[0-9]+[ ]?,[ ]?$");
-        final String corpoResposta = response
-                .request()
-                .bodyPublisher()
-                .get()
-                .toString();
 
         // Pega a linha com a contagem.
         List<String> linhaList = Arrays.stream(
-                        corpoResposta.split("\n"))
+                        bodyStr.split("\n"))
                 .filter(cs -> pattern.matcher(cs).find())
                 .toList();
 
         if (linhaList.isEmpty()) {
-            log.error("Corpo sem o dado necessário : " + corpoResposta.replace("\n", " "));
+            ContaRegistrosElastic.log.error("Corpo sem o dado necessário : " + bodyStr.replace("\n", " "));
             return -1L;
         }
 
@@ -93,61 +100,8 @@ public class ContaRegistrosElastic {
         try {
             return Long.parseLong(quantidadeStr);
         } catch (NumberFormatException nfe) {
-            log.error("Problemas com o ParseLong da quantidade : " + quantidadeStr);
+            ContaRegistrosElastic.log.error("Problemas com o ParseLong da quantidade : " + quantidadeStr);
             return -1L;
         }
-
-//        System.out.println(response.uri());
-//// ------------------------------
-//
-//        System.out.println("---------------------------------------");
-//
-//        // Create a URL object for the website you want to GET from.
-//        URL url = new URL("https://spedison:12345678@127.0.0.1:9200/dados_abertos/_count");
-//
-//        // Open a connection to the website.
-//        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-//        // Set the request method to GET.
-//        connection.setRequestMethod("GET");
-//        connection.setRequestProperty("kbn-xsrf", "reporting");
-//        connection.setRequestProperty("Content-Type", "application/json");
-//        connection.setHostnameVerifier((hostname, session) -> true);
-//        // Set the request body.
-//        // Set the request body.
-//        connection.setDoOutput(true);
-//        OutputStream os = connection.getOutputStream();
-//        os.write("This is the request body.".getBytes());
-//        os.flush();
-//
-//        // Send the request.
-//        connection.connect();
-//
-//        // Get the response code.
-//        int responseCode = connection.getResponseCode();
-//
-//        // Check the response code.
-//        if (responseCode == 200) {
-//            // The request was successful.
-//
-//            // Get the response body.
-//            InputStream inputStream = connection.getInputStream();
-//            byte[] responseBody = new byte[inputStream.available()];
-//            inputStream.read(responseBody);
-//
-//            // Print the response body.
-//            System.out.println(new String(responseBody));
-//        } else {
-//            // The request was not successful.
-//
-//            // Print the response code.
-//            System.out.println("Response code: " + responseCode);
-//        }
-//        return 0L;
     }
-
-//    public static void main(String[] args) throws IOException, InterruptedException {
-//        ContaRegistrosElastic cre = new ContaRegistrosElastic();
-//        cre.contagem();
-//    }
-
 }

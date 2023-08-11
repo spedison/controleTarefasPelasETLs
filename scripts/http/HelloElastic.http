@@ -1,0 +1,14 @@
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200
+
+### ###################################################
+
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200
+
+### ####################################################
+
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200/process*/_count?pretty=true
+
+### ##################################################
+
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200/process*/_count?pretty=true
+

@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Entity
 @Data
 @AllArgsConstructor
-@Table(schema = "ADMTAREFAS")
+@Table(schema = "ADMATENA", name = "TB_ETLS_ATIVIDADE")
 public class Atividade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

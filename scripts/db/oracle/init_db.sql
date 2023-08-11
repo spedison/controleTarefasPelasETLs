@@ -1,11 +1,11 @@
-drop table admtarefas.atividade cascade constraints
+drop table ADMATENA.tb_etls_atividade cascade constraints
 /
 
-drop table admtarefas.tarefa cascade constraints
+drop table ADMATENA.tb_etls_tarefa cascade constraints
 /
 
 
-create table admtarefas.atividade (
+create table ADMATENA.tb_etls_atividade (
     id number(19,0) generated as identity,
     nome varchar2(100 char),
     forcado number(1,0) check (forcado in (0,1)),
@@ -16,7 +16,7 @@ create table admtarefas.atividade (
 /
 
 
-create table admtarefas.tarefa (
+create table ADMATENA.tb_etls_tarefa (
         id number(19,0) generated as identity,
         tipo varchar2(100 char),
         sucesso number(1,0) check (sucesso in (0,1)),
@@ -29,11 +29,8 @@ create table admtarefas.tarefa (
         primary key (id))
 /
 
-alter table admtarefas.atividade add constraint FK_atividade_tarefa foreign key (tarefa_id) references admtarefas.tarefa
+alter table ADMATENA.tb_etls_atividade add constraint FK_atividade_tarefa foreign key (tarefa_id) references ADMATENA.tb_etls_tarefa
 /
 
 commit
 /
-
-
-

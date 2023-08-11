@@ -3,10 +3,10 @@ source ./comum.sh
 # echo "Número da Tarefa = " $2
 # echo "Nome Atividade = " $3
 
-iniciaAtividade="IniciaAtividade"
+atividade="IniciaAtividade"
 if [[ $1 == "Fim" ]]
 then
-  iniciaAtividade="TerminaAtividade"
+  atividade="TerminaAtividade"
 fi
 
-$JAVA_HOME/bin/java -jar $BASE_PROJECT/controleTarefaScripts-0.0.1-SNAPSHOT.jar  $iniciaAtividade  $2 "$3" 2>&1 | grep ControleTarefaScriptsApplication | ag "(INFO|ERROR)" | ag [^P]ID | cut -f2 -d"|"
+$JAVA_HOME/bin/java -jar $BASE_PROJECT/controleTarefaScripts-0.0.1-SNAPSHOT.jar  $atividade  $2 "$3" 2>&1 | grep ControleTarefaScriptsApplication | ag "(INFO|ERROR)" | ag [^P]ID | cut -f2 -d"|"

@@ -2,8 +2,6 @@ package br.com.spedison.controletarefascripts;
 
 import br.com.spedison.controletarefascripts.servico.AtividadeServico;
 import br.com.spedison.controletarefascripts.servico.TarefaServico;
-import br.com.spedison.controletarefascripts.vo.Atividade;
-import br.com.spedison.controletarefascripts.vo.Tarefa;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,7 +14,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 @SpringBootApplication
@@ -31,7 +28,7 @@ import java.util.Objects;
 @Log4j2
 public class ControleTarefaScriptsApplication {
 
-    private static final String strErro = "ID|ERRO";
+    private static final String STR_ERRO = "ID|ERRO";
 
     public static void main(String[] args) {
         SpringApplication.run(ControleTarefaScriptsApplication.class, args);
@@ -42,6 +39,7 @@ public class ControleTarefaScriptsApplication {
         return args -> {
 
             if (args.length == 0) {
+                // Completar com as demais opções.
                 System.out.println("""
                         Opções :: 
                         IniciaIDTarefa  <Nome Tipo Tarefa>
@@ -61,27 +59,22 @@ public class ControleTarefaScriptsApplication {
                 log.error("Problemas com a quantidade de argumentos. (1)");
             } else {
 
-                if (args[0].toLowerCase().contains("tarefa")){
+                if (args[0].toLowerCase().contains("tarefa")) {
                     id = ctm.executa(ts, args);
                 }
 
-                if (args[0].toLowerCase().contains("atividade")){
+                if (args[0].toLowerCase().contains("atividade")) {
                     id = cam.executa(as, args);
                 }
             }
 
             if (Objects.isNull(id))
-                log.error(strErro);
+                log.error(STR_ERRO);
             else
                 log.info("ID|" + id);
 
             cctx.close();
         };
     }
+
 }
-//                String[] beanNames = ctx.getBeanDefinitionNames();
-//                Arrays.sort(beanNames);
-//                for (String beanName : beanNames) {
-//                    System.out.println(beanName);
-//                }
-//}

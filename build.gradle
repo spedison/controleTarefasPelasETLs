@@ -25,24 +25,36 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    compileOnly 'org.projectlombok:lombok'
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
-    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    //implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    implementation 'co.elastic.clients:elasticsearch-java:8.2.3'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+    compileOnly 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    //implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+
+    //implementation 'co.elastic.clients:elasticsearch-java:8.2.3'
+    //implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
 
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
     //runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
+
     annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {
+
+    def k = System.getenv()
+    for (t : k){
+        println("Chave " + t.key + " com valor :: " + t.value)
+    }
+
+    //systemProperty 'spring.profiles.active', 'maria,elastic-dev'
     //environment "spring_profiles_active", "maria"
-    environment "spring_profiles_active", "oracle"
+    //environment "spring_profiles_active", "maria,elastic-dev"
     useJUnitPlatform()
 }
