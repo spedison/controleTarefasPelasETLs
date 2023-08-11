@@ -6,7 +6,7 @@
 #    "match_all": {}
 #  }
 #}'
-GET https://spedison:12345678@127.0.0.1:9200/dados_abertos/_count
+GET http://elastic:123456@elasticdb-7:9200/proce*/_count
 kbn-xsrf: reporting
 Content-Type: application/json
 
@@ -25,9 +25,8 @@ Content-Type: application/json
 #    "match_all": {}
 #  }
 #}'
-GET http://elasticsearch:9200/_search
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200/_search?pretty=true
 Content-Type: application/json
-
 
 {
   "query": {
@@ -36,14 +35,28 @@ Content-Type: application/json
 }
 
 ###
-GET http://elastic:123456@127.0.0.1:9200/
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200
+
+## ##############
+
+###
+
+# curl http://elastic:123456@elasticdb-7.casa.com.br:9200
+###
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200
 Content-Type: application/json
+
+## ################################
 
 ## Create index on
 PUT http://elastic:123456@127.0.0.1:9200/variavel
 Content-Type: application/json
 
+##
+
 ## Configure Index Step 1
+##
+
 PUT http://elastic:123456@127.0.0.1:9200/variavel
 Content-Type: application/json
 
@@ -56,5 +69,17 @@ Content-Type: application/json
   }
 }
 ## ###############
+
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200/process*/_count?pretty=true
+
+##
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200
+
+## #############
+
+GET http://elastic:123456@elasticdb-7.casa.com.br:9200/process*/_count?pretty=true
+
+##
+
 
 
