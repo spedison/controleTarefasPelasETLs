@@ -38,15 +38,9 @@ public class ControleTarefaScriptsApplication {
     public CommandLineRunner commandLineRunner(ApplicationContext ctx, ConfigurableApplicationContext cctx) {
         return args -> {
 
-            if (args.length == 0) {
-                // Completar com as demais opções.
-                System.out.println("""
-                        Opções :: 
-                        IniciaIDTarefa  <Nome Tipo Tarefa>
-                        TerminaIDTarefa <Nome Tipo Tarefa> <ID Tarefa>
-                        """);
-                return;
-            }
+            if (verificaParametroVazio(args)) return;
+
+            mostraVariaveisAmbiente();
 
             TarefaServico ts = ctx.getBean(TarefaServico.class);
             AtividadeServico as = ctx.getBean(AtividadeServico.class);
@@ -55,26 +49,47 @@ public class ControleTarefaScriptsApplication {
 
             Long id = null;
 
-            if (args.length == 0) {
-                log.error("Problemas com a quantidade de argumentos. (1)");
-            } else {
-
-                if (args[0].toLowerCase().contains("tarefa")) {
-                    id = ctm.executa(ts, args);
-                }
-
-                if (args[0].toLowerCase().contains("atividade")) {
-                    id = cam.executa(as, args);
-                }
+            if (args[0].toLowerCase().contains("tarefa")) {
+                id = ctm.executa(ts, args);
             }
 
-            if (Objects.isNull(id))
-                log.error(STR_ERRO);
-            else
-                log.info("ID|" + id);
+            if (args[0].toLowerCase().contains("atividade")) {
+                id = cam.executa(as, args);
+            }
+
+            mostraID(id);
 
             cctx.close();
         };
     }
 
+    private static void mostraID(Long id) {
+        if (Objects.isNull(id))
+            log.error(STR_ERRO);
+        else
+            log.info("ID|" + id);
+    }
+
+    private static void mostraVariaveisAmbiente() {
+        String debug = System.getenv("DEBUG");
+        if (!Objects.isNull(debug) && debug.trim().equals("1")) {
+            System.getenv().forEach((k, v) ->
+                    log.info("Valor de variável de ambiente [%s] => [%s]".formatted(k, v))
+            );
+        }
+    }
+
+    private static boolean verificaParametroVazio(String[] args) {
+        if (args.length == 0) {
+            // Completar com as demais opções.
+            System.out.println("""
+                    Opções :: 
+                    IniciaIDTarefa  <Nome Tipo Tarefa>
+                    TerminaIDTarefa <Nome Tipo Tarefa> <ID Tarefa>
+                                        
+                    """);
+            return true;
+        }
+        return false;
+    }
 }

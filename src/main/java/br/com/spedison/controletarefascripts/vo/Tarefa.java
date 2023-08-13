@@ -39,6 +39,6 @@ public class Tarefa {
     @Column(nullable = true)
     private Boolean sucesso;
 
-    @OneToMany(mappedBy = "tarefa")
+    @OneToMany(mappedBy = "tarefa",fetch = FetchType.EAGER)
     private List<Atividade> atividade;
 }

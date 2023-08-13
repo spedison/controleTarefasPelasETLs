@@ -2,6 +2,7 @@ package br.com.spedison.controletarefascripts.servico;
 
 import br.com.spedison.controletarefascripts.repository.AtividadeRepository;
 import br.com.spedison.controletarefascripts.repository.TarefaRepository;
+import br.com.spedison.controletarefascripts.servico.vo.TarefaVisualizacao;
 import br.com.spedison.controletarefascripts.vo.Atividade;
 import br.com.spedison.controletarefascripts.vo.Tarefa;
 import lombok.extern.log4j.Log4j2;
@@ -11,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @Log4j2
@@ -128,4 +131,72 @@ public class TarefaServico {
         tarefaRepository.save(tarefa);
     }
 
+
+    public List<TarefaVisualizacao> listaTarefasPendetes() {
+        List<Tarefa> listTarefas = tarefaRepository.findByFimEmpty();
+        return listTarefas
+                .stream()
+                .map(t -> {
+                    TarefaVisualizacao retMapLocal = new TarefaVisualizacao();
+                    retMapLocal.setTarefa(t);
+                    retMapLocal.setQuantidadeAtividades(t.getAtividade().size());
+                    retMapLocal.setQuantidadeAtividadesTerminadas(
+                            (int) (t
+                                    .getAtividade()
+                                    .stream()
+                                    .map(Atividade::getFim)
+                                    .filter(Objects::nonNull)
+                                    .count())
+                    );
+
+                    Function<Atividade, Boolean> comp = (atividade) -> Objects.nonNull(atividade.getFim()) && !atividade.getForcado();
+
+                    retMapLocal.setQuantidadeAtividadesTerminadasSucesso(
+                            (int) (t
+                                    .getAtividade()
+                                    .stream()
+                                    .filter(comp::apply)
+                                    .count())
+                    );
+                    return retMapLocal;
+                }).toList();
+    }
+
+    public List<TarefaVisualizacao> listaTarefasExecutadas() {
+        List<Tarefa> listTarefas = tarefaRepository.findByFimNotEmpty();
+
+        return listTarefas
+                .stream()
+                .map(t -> {
+                    TarefaVisualizacao retMapLocal = new TarefaVisualizacao();
+                    retMapLocal.setTarefa(t);
+                    retMapLocal.setQuantidadeAtividades(t.getAtividade().size());
+
+                    retMapLocal.setQuantidadeAtividadesTerminadas(
+                            (int) (t
+                                    .getAtividade()
+                                    .stream()
+                                    .map(Atividade::getFim)
+                                    .filter(Objects::nonNull)
+                                    .count())
+                    );
+
+                    Function<Atividade, Boolean> comp =
+                            (atividade) ->
+                                    Objects.nonNull(atividade.getFim()) && !atividade.getForcado();
+
+                    retMapLocal.setQuantidadeAtividadesTerminadasSucesso(
+                            (int) (t
+                                    .getAtividade()
+                                    .stream()
+                                    .filter(comp::apply)
+                                    .count())
+                    );
+                    return retMapLocal;
+                })
+                .sorted(
+                        (TarefaVisualizacao o1, TarefaVisualizacao o2) ->
+                                o1.getTarefa().getInicio().compareTo(o2.getTarefa().getInicio()))
+                .toList();
+    }
 }
