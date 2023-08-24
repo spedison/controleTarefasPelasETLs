@@ -38,6 +38,8 @@ public class ControleTarefaMain {
             }
         } else if (args[0].equalsIgnoreCase("FechaForcadoTarefa")) {
             ts.fecharForcadamenteTarefa(Long.parseLong(args[1]));
+        } else if (args[0].equalsIgnoreCase("tempoUltimaExecucaoTarefa")){
+            id = ts.tempoHorasUltimoSucesso(args[1]);
         } else if (args[0].equalsIgnoreCase("ListaTarefa")) {
             List<TarefaVisualizacao> tarefasPendentes = ts.listaTarefasPendetes();
             List<TarefaVisualizacao> tarefasExecutadas = ts.listaTarefasExecutadas();

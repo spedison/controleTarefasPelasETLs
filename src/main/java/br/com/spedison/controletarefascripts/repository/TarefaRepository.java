@@ -24,4 +24,5 @@ public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
     @Query("select t from Tarefa  t where not t.fim is null")
     List<Tarefa> findByFimNotEmpty();
 
+    Optional<Tarefa> findFirstByTipoAndAndFimIsNotNullAndSucessoIsTrueOrderByInicioDesc(String tipo);
 }

@@ -199,4 +199,12 @@ public class TarefaServico {
                                 o1.getTarefa().getInicio().compareTo(o2.getTarefa().getInicio()))
                 .toList();
     }
+
+    public Long tempoHorasUltimoSucesso(String nomeTarefa) {
+        Optional<Tarefa> item = tarefaRepository.findFirstByTipoAndAndFimIsNotNullAndSucessoIsTrueOrderByInicioDesc(nomeTarefa);
+        if (item.isEmpty())
+            return -1L;
+
+        return (System.currentTimeMillis() - item.get().getFim().getTime()) / 3_600_000;
+    }
 }

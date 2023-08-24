@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.2'
+    id 'distribution'
 }
 
 group = 'br.com.spedison'
@@ -47,4 +48,15 @@ test {
         println("Chave " + t.key + " com valor :: " + t.value)
     }
     useJUnitPlatform()
+}
+
+distributions {
+    main {
+        distributionBaseName = 'controleTarefasScripts'
+        distributionClassifier = 'V1.0'
+        contents {
+            from 'scripts/bash/'
+            from 'build/libs/controleTarefaScripts-0.0.1-SNAPSHOT.jar'
+        }
+    }
 }

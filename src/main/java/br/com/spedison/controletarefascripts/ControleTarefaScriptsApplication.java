@@ -51,9 +51,7 @@ public class ControleTarefaScriptsApplication {
 
             if (args[0].toLowerCase().contains("tarefa")) {
                 id = ctm.executa(ts, args);
-            }
-
-            if (args[0].toLowerCase().contains("atividade")) {
+            } else if (args[0].toLowerCase().contains("atividade")) {
                 id = cam.executa(as, args);
             }
 
