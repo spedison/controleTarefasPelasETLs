@@ -23,6 +23,10 @@ public class AtividadeServico {
     @Autowired
     TarefaRepository tarefaRepository;
 
+    public List<Atividade> listaAtividadesTarefa(Long idTarefa){
+        return atividadeRepository.procuraAtividadesDaTarefa(idTarefa);
+    }
+
     @Transactional
     public Atividade criaNovaAtividade(Long idTarefa, String nomeAtividade) {
         Atividade atividade = new Atividade();
@@ -70,7 +74,7 @@ public class AtividadeServico {
 
             if (!Objects.isNull(ret.getTarefa().getFim())) {
                 log.error("A tarefa dessa atividade já foi fechada. Inconsistência nas atividades.");
-            } else if (ret.getTarefa().getId() != idTarefa) {
+            } else if (!ret.getTarefa().getId().equals(idTarefa)) {
                 log.error("A tarefa %d tem id diferente da atividade pendente.".formatted(idTarefa));
             } else {
                 ret.setFim(new Timestamp(System.currentTimeMillis()));

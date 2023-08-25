@@ -19,4 +19,7 @@ public interface AtividadeRepository extends JpaRepository<Atividade, Long> {
 
     @Query("select a from Atividade a where a.fim is null and a.tarefa.id = :idTarefa")
     List<Atividade> procuraAtividadesAbertasDaTarefa(Long idTarefa);
+
+    @Query("select a from Atividade a where a.tarefa.id = :idTarefa")
+    List<Atividade> procuraAtividadesDaTarefa(Long idTarefa);
 }

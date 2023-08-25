@@ -1,5 +1,6 @@
 package br.com.spedison.controletarefascripts.repository;
 
+import br.com.spedison.controletarefascripts.vo.Atividade;
 import br.com.spedison.controletarefascripts.vo.Tarefa;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +26,5 @@ public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
     List<Tarefa> findByFimNotEmpty();
 
     Optional<Tarefa> findFirstByTipoAndAndFimIsNotNullAndSucessoIsTrueOrderByInicioDesc(String tipo);
+
 }
