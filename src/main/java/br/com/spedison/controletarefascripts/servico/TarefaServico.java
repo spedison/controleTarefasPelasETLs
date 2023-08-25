@@ -109,26 +109,33 @@ public class TarefaServico {
 
 
     @Transactional
-    public void fecharForcadamenteTarefa(Long idTarefa) {
+    public Long fecharForcadamenteTarefa(Long idTarefa) {
         Optional<Tarefa> tarefaOpt = tarefaRepository.findById(idTarefa);
         if (tarefaOpt.isEmpty()) {
             log.error("Tarefa não localizada %d".formatted(idTarefa));
-            return;
+            return null;
         }
 
-        Tarefa tarefa = tarefaOpt.get();
+        try {
+            Tarefa tarefa = tarefaOpt.get();
 
-        for (Atividade ativ : tarefa.getAtividade()) {
-            ativ.setFim(new Timestamp(System.currentTimeMillis()));
-            ativ.setForcado(true);
+            for (Atividade ativ : tarefa.getAtividade()) {
+                ativ.setFim(new Timestamp(System.currentTimeMillis()));
+                ativ.setForcado(true);
+            }
+            atividadeRepository.saveAll(tarefa.getAtividade());
+
+            tarefa.setFim(new Timestamp(System.currentTimeMillis()));
+            tarefa.setContagemRegistrosVariaveisElasticFinalProcessamento(-1L);
+            tarefa.setContagemRegistrosProcessosElasticFinalProcessamento(-1L);
+            tarefa.setSucesso(false);
+            tarefaRepository.save(tarefa);
+            return 1L;
+        } catch (RuntimeException rte){
+            return null;
+        } catch (Exception ex){
+            return null;
         }
-        atividadeRepository.saveAll(tarefa.getAtividade());
-
-        tarefa.setFim(new Timestamp(System.currentTimeMillis()));
-        tarefa.setContagemRegistrosVariaveisElasticFinalProcessamento(-1L);
-        tarefa.setContagemRegistrosProcessosElasticFinalProcessamento(-1L);
-        tarefa.setSucesso(false);
-        tarefaRepository.save(tarefa);
     }
 
 

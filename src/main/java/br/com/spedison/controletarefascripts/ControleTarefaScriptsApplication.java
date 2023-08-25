@@ -45,6 +45,7 @@ public class ControleTarefaScriptsApplication {
             TarefaServico ts = ctx.getBean(TarefaServico.class);
             AtividadeServico as = ctx.getBean(AtividadeServico.class);
             ControleAtividadeMain cam = ctx.getBean(ControleAtividadeMain.class);
+            ControleConexaoMain cc = ctx.getBean(ControleConexaoMain.class);
             ControleTarefaMain ctm = ctx.getBean(ControleTarefaMain.class);
 
             Long id = null;
@@ -53,6 +54,8 @@ public class ControleTarefaScriptsApplication {
                 id = ctm.executa(ts, args);
             } else if (args[0].toLowerCase().contains("atividade")) {
                 id = cam.executa(as, args);
+            } else if(args[0].toLowerCase().contains("conexao")){
+                id = cc.executa(ts,args);
             }
 
             mostraID(id);

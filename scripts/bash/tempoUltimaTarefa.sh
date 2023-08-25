@@ -1,7 +1,12 @@
 source ./comum.sh
-#Deve receber Nada
-## Nome padrão da ETL é EtlBasica
-## TODO : Tornar esse parametros opcional
+
+# O primeiro parametro eh o nome da tarefa, opcional.
+
+if [[ -n $1  ]]
+then
+  NOME_TAREFA=$1
+fi
+
 if [[ $DEBUG == 1 ]]
 then
   $JAVA_HOME/bin/java -jar $BASE_PROJECT/controleTarefaScripts-0.0.1-SNAPSHOT.jar  tempoUltimaExecucaoTarefa "$NOME_TAREFA"
